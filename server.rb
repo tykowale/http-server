@@ -1,5 +1,5 @@
 require 'socket'
-
+require 'uri'
 
 hostname = 'localhost'
 port = 2000
@@ -16,16 +16,22 @@ path = <<-HTML
 </html>
 HTML
 
+def controller(request)
+  request_line = request.split(' ')[1]
+  path = URI(request_line).path
+end
+
 server = TCPServer.new(port)
 loop {
   client = server.accept
-  client.puts "HTTP/1.1 200 OK"
-  client.puts "Date: #{Time.now.ctime}"
-  client.puts "Server: #{`uname -sr`}"
-  client.puts "Content-Type: text/html; charset=UTF-8"
-  client.puts "Content-Length: #{path.length}"
-  client.puts "Connection: close"
-  client.puts
-  client.puts path
+  response = client.gets
+  client.print "HTTP/1.1 200 OK\r\n" +
+               "Date: #{Time.now.ctime}\r\n" +
+               "Server: #{`uname -sr`}" +
+               "Content-Type: text/html; charset=UTF-8\r\n" +
+               "Content-Length: #{path.bytesize}\r\n" +
+               "Connection: close\r\n"
+  client.print "\r\n"
+  client.print path
   client.close
 }
