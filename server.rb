@@ -2,31 +2,35 @@ require 'socket'
 
 hostname = 'localhost'
 port = 2000
+path = <<-HTML
+<html>
+<head>
+  <title>Welcome</title>
+</head>
+<body>
+  <h1>Hello World</h1>
+  <p>Welcome to the world's simplest web server.</p>
+  <p><img src='http://i.imgur.com/A3crbYQ.gif'></p>
+</body>
+</html>
+HTML
 
-def input_reader(string)
-  string.chomp!
-  if string.downcase == 'home'
-    return "Welcome Home!"
-  elsif string.downcase == 'profile'
-    return "Name: Ty \nProfile: Incomplete"
-  else
-    return "What does that mean?"
-  end
-end
+request = "GET HTTP/1.1\r\n\r\n"
 
-server = TCPServer.new(port)  # Socket to listen on port 2000
-loop {                         # Servers run forever
-  client = server.accept       # Wait for a client to connect
-  client.puts Time.now.ctime  # Send the time to the client
-  input = client.gets
-  client.puts input_reader(input)
-  client.close                 # Disconnect from the client
+server = TCPServer.new(port)
+loop {
+  client = server.accept
+  client.puts "Date: #{Time.now.ctime}"
+  client.puts "Server: #{`uname -sr`}"
+  client.puts "Content-Type: text/html; charset=UTF-8"
+  client.puts "Content-Length: #{content.length}"
+  client.puts "Connection: close"
+  client.puts
+  client.puts content
+  client.close
 }
 
-s = TCPSocket.open(hostname, port)
+socket = TCPSocket.open(hostname, port)
+socket.print(request)
+response = socket.read
 
-while line = s.gets   # Read lines from the socket
-  puts line.chop
-end
-
-s.close
