@@ -48,7 +48,7 @@ server = TCPServer.new(port)
 loop {
   client = server.accept
   response = client.gets
-  if controller(response)[1..-1] == "welcome" || "profile"
+  if controller(response)[1..-1] == "welcome"
     client.print "HTTP/1.1 200 OK\r\n" +
                "Date: #{Time.now.ctime}\r\n" +
                "Server: #{`uname -sr`}" +
@@ -57,6 +57,15 @@ loop {
                "Connection: close\r\n"
     client.print "\r\n"
     client.print welcome
+  elsif controller(response)[1..-1] == "profile"
+    client.print "HTTP/1.1 200 OK\r\n" +
+               "Date: #{Time.now.ctime}\r\n" +
+               "Server: #{`uname -sr`}" +
+               "Content-Type: text/html; charset=UTF-8\r\n" +
+               "Content-Length: #{profile.bytesize}\r\n" +
+               "Connection: close\r\n"
+    client.print "\r\n"
+    client.print profile
   else
     client.print "HTTP/1.1 404 NOT FOUND\r\n" +
                "Date: #{Time.now.ctime}\r\n" +
