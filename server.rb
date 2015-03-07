@@ -19,12 +19,13 @@ HTML
 server = TCPServer.new(port)
 loop {
   client = server.accept
+  client.puts "HTTP/1.1 200 OK"
   client.puts "Date: #{Time.now.ctime}"
   client.puts "Server: #{`uname -sr`}"
   client.puts "Content-Type: text/html; charset=UTF-8"
   client.puts "Content-Length: #{path.length}"
   client.puts "Connection: close"
-  # client.puts
-  # client.puts path
+  client.puts
+  client.puts path
   client.close
 }
