@@ -1,5 +1,6 @@
 require 'socket'
 
+
 hostname = 'localhost'
 port = 2000
 path = <<-HTML
@@ -27,4 +28,3 @@ loop {
   # client.puts path
   client.close
 }
-
